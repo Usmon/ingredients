@@ -6,6 +6,7 @@ use Yii;
 use common\models\Dishes;
 use common\models\Ingredients;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -54,8 +55,14 @@ class DishesController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $dataProvider = new ArrayDataProvider([
+            'models' => $model->disheIngs,
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'dataProvider' => $dataProvider
         ]);
     }
 
@@ -69,7 +76,7 @@ class DishesController extends Controller
         $model = new Dishes();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $model->createItems(Yii::$app->request->post('Dishes')['ingredients']['items']);
+            $model->createItems(Yii::$app->request->post('Dishes')['disheIngs']['id_ing']);
 
             return $this->redirect(['view', 'id' => $model->id]);
         }

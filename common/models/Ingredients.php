@@ -76,4 +76,9 @@ class Ingredients extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+
+    public function scopeIsActive()
+    {
+        return $this->andWhere(['active' => self::$IS_ACTIVE]);
+    }
 }

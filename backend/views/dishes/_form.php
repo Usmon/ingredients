@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 use unclead\multipleinput\MultipleInput;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -10,7 +11,15 @@ use yii\web\JsExpression;
 /* @var $model common\models\Dishes */
 /* @var $form yii\widgets\ActiveForm */
 ?>
+<?php
+echo Select2::widget([
+    'name' => 'state_200',
+    'size' => Select2::MEDIUM,
+    'value' => '14719648',
+    'initValueText' => 'kartik-v/yii2-widgets',
+]);
 
+?>
 <div class="dishes-form">
 
     <?php $form = ActiveForm::begin(); ?>
@@ -18,16 +27,16 @@ use yii\web\JsExpression;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?php
-        echo $form->field($model, 'ingredients')->widget(MultipleInput::className(), [
-            'max'               => 5,
+        echo $form->field($model, 'disheIngs')->widget(MultipleInput::className(), [
             'min'               => 1,
             'allowEmptyList'    => false,
             'enableGuessTitle'  => true,
             'columns' => [
                 [
-                    'name'  => 'items',
-                    'type'  => \kartik\select2\Select2::className(),
+                    'name'  => 'id_ing',
+                    'type'  => Select2::className(),
                     'options' => [
+                        'initValueText' => 'Olma',
                         'pluginOptions' => [
                             'allowClear' => true,
                             'minimumInputLength' => 3,
@@ -56,3 +65,15 @@ use yii\web\JsExpression;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php
+//Fixing Select2 bug with multiple row input
+$JS = <<<JS
+    $('.select2-selection__rendered[role=textbox]').each(function(index, item){
+        var title = $(item).attr('title');
+        $(item).text(title);
+    });
+JS;
+
+$this->registerJs($JS);
+
+?>
