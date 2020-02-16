@@ -92,4 +92,38 @@ class Dishes extends \yii\db\ActiveRecord
             $sub_item->save();
         }
     }
+
+    /**
+     * Update sub items
+     *
+     * @param array $ingredients
+     */
+    public function updateItems(array $ingredients)
+    {
+        $this->deleteItems($ingredients);
+
+        foreach ($ingredients as $item) {
+            $model = DisheIngs::find()->where(['id_ing' => $item])->one();
+            if (!$model) {
+                $sub_item = new DisheIngs([
+                    'id_dish' => $this->primaryKey,
+                    'id_ing' => $item
+                ]);
+                $sub_item->save();
+            }
+
+        }
+    }
+
+    /**
+     *
+     */
+    private function deleteItems(array $ingredients)
+    {
+        foreach ($this->disheIngs as $item) {
+            if (!array_search($item->id_ing, $ingredients)) {
+                $item->delete();
+            }
+        }
+    }
 }

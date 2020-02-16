@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * DishesController implements the CRUD actions for Dishes model.
@@ -23,6 +24,16 @@ class DishesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => [],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -98,6 +109,8 @@ class DishesController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->updateItems(Yii::$app->request->post('Dishes')['disheIngs']['id_ing']);
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -109,7 +122,7 @@ class DishesController extends Controller
     /**
      * Search for Select2
      *
-     * @return int
+     * @return array
      */
     public function actionIngredientsSearch($q = null, $id = null)
     {
@@ -125,7 +138,7 @@ class DishesController extends Controller
             $out['results'] = array_values($data);
         }
         elseif ($id > 0) {
-            $out['results'] = ['id' => $id, 'text' => Ingredients::find($id)->name];
+            $out['results'] = ['id' => $id, 'text' => Ingredients::findOne($id)->name];
         }
 
         return $out;
